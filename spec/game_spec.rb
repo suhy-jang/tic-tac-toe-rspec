@@ -5,181 +5,64 @@ require './lib/board.rb'
 require './lib/game.rb'
 
 RSpec.describe Game do
-  let(:player1) { double(name: 'EBUKA', stone: :O) }
-  let(:player2) { double(name: 'SUH', stone: :X) }
-  let(:oe) { player1.stone }
-  let(:ex) { player2.stone }
-  let(:board) { Board.new }
-  let(:game) { Game.new(player2, player2, board) }
-  let(:set_row_top_only1_1) { board.state = [oe, 2, 3, 4, 5, 6, 7, 8, 9] }
-  let(:set_row_top_only2_2) { board.state = [ex, ex, 3, 4, 5, 6, 7, 8, 9] }
-  let(:set_row_top_1) { board.state = [oe, oe, oe, 4, 5, 6, 7, 8, 9] }
-  let(:set_row_mid_2) { board.state = [1, 2, 3, ex, ex, ex, 7, 8, 9] }
-  let(:set_row_bottom_1) { board.state = [1, 2, 3, 4, 5, 6, oe, oe, oe] }
-  let(:set_col_left_1) { board.state = [oe, 2, 3, oe, 5, 6, oe, 8, 9] }
-  let(:set_col_mid_2) { board.state = [1, ex, 3, 4, ex, 6, 7, ex, 9] }
-  let(:set_col_right_1) { board.state = [1, 2, oe, 4, 5, oe, 7, 8, oe] }
-  let(:set_diag_r_low_1) { board.state = [oe, 2, 3, 4, oe, 6, 7, 8, oe] }
-  let(:set_diag_r_higher_2) { board.state = [1, 2, ex, 4, ex, 6, ex, 8, 9] }
-  let(:set_rand_1) { board.state = [oe, ex, oe, 4, 5, 6, 7, oe, 9] }
-  let(:set_rand_2) { board.state = [1, oe, 3, 4, 5, 6, oe, ex, oe] }
-  let(:set_rand_3) { board.state = [oe, 2, 3, ex, 5, ex, oe, 8, 9] }
-  let(:set_rand_4) { board.state = [1, 2, oe, oe, 5, ex, 7, 8, oe] }
+  let(:player) do
+    [
+      double(name: 'ABC', stone: :O),
+      double(name: 'DEF', stone: :X)
+    ]
+  end
+  let(:winner_idx) { rand(2) }
+  let(:no_winer_idx) { (0..1).reject { |idx| idx == winner_idx }.sample }
+  let(:p) { player[winner_idx].stone }
+  let(:q) { player[no_winer_idx].stone }
+  let(:win_board) do
+    [
+      double(state: [p, p, p, 4, 5, 6, 7, 8, 9]), # row_top
+      double(state: [1, 2, 3, p, p, p, 7, 8, 9]), # row_mid
+      double(state: [1, 2, 3, 4, 5, 6, p, p, p]), # row_bottom
+      double(state: [p, 2, 3, p, 5, 6, p, 8, 9]), # col_left
+      double(state: [1, p, 3, 4, p, 6, 7, p, 9]), # col_mid
+      double(state: [1, 2, p, 4, 5, p, 7, 8, p]), # col_right
+      double(state: [p, 2, 3, 4, p, 6, 7, 8, p]), # diag_r_low
+      double(state: [1, 2, p, 4, p, 6, p, 8, 9]) # diag_r_higher
+    ]
+  end
 
-  describe '@winner' do
-    context 'with not enough pieces to be winner' do
-      context 'when it starts' do
-        it 'returns no object' do
-          game.test_winner_status_update(player1)
-          expect(game.winner).to_not eql(player1)
-        end
-      end
+  let(:no_winer_board) do
+    [
+      double(state: [1, 2, 3, 4, 5, 6, 7, 8, 9]), # default
+      double(state: [p, 2, 3, 4, 5, 6, 7, 8, 9]), # only1
+      double(state: [p, p, 3, 4, 5, 6, 7, 8, 9]), # only2
+      double(state: [p, q, p, 4, 5, 6, 7, p, 9]), # rand_1
+      double(state: [1, p, 3, 4, 5, 6, p, q, p]), # rand_2
+      double(state: [p, 2, 3, q, 5, p, p, 8, 9]), # rand_3
+      double(state: [1, 2, p, p, 5, q, 7, 8, q]) # rand_4
+    ]
+  end
 
-      context 'with one piece only' do
-        before do
-          set_row_top_only1_1
-          game.test_winner_status_update(player1)
-        end
+  let(:rand_win) { rand(win_board.length) }
+  let(:win_game) { Game.new(player[0], player[1], win_board[rand_win]) }
+  let(:winner_name) { player[winner_idx].name }
+  let(:rand_no_winer) { rand(no_winer_board.length) }
+  let(:no_winer_game) { Game.new(player[0], player[1], no_winer_board[rand_no_winer]) }
+  let(:no_winer_name) { player[no_winer_idx].name }
 
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player1)
-        end
-      end
+  before do
+    win_game.test_winner_status_update(player[winner_idx])
+    no_winer_game.test_winner_status_update(player[no_winer_idx])
+  end
 
-      context 'with two pieces only' do
-        before do
-          set_row_top_only2_2
-          game.test_winner_status_update(player2)
-        end
-
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player2)
-        end
-      end
-    end
-
-    context 'with putting piece at spreaded place' do
-      context 'on the random place 1' do
-        before do
-          set_rand_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player1)
-        end
-      end
-
-      context 'on the random place 2' do
-        before do
-          set_rand_2
-          game.test_winner_status_update(player2)
-        end
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player2)
-        end
-      end
-
-      context 'on the random place 3' do
-        before do
-          set_rand_3
-          game.test_winner_status_update(player1)
-        end
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player1)
-        end
-      end
-
-      context 'on the random place 4' do
-        before do
-          set_rand_4
-          game.test_winner_status_update(player2)
-        end
-        it 'returns no object' do
-          expect(game.winner).to_not eql(player2)
-        end
+  describe '@winner after #test_winner_status_update' do
+    context 'when no winner' do
+      it 'contains no object' do
+        expect(no_winer_game.winner).to_not eql(player[winner_idx])
       end
     end
 
-    context 'with three same pieces' do
-      context 'on the top row' do
-        before do
-          set_row_top_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player1)
-        end
+    context 'when winner' do
+      it 'contains winner object' do
+        expect(win_game.winner).to eql(player[winner_idx])
       end
-
-      context 'on the mid row' do
-        before do
-          set_row_mid_2
-          game.test_winner_status_update(player2)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player2)
-        end
-      end
-
-      context 'on the bottom row' do
-        before do
-          set_row_bottom_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player1)
-        end
-      end
-
-      context 'on the left column' do
-        before do
-          set_col_left_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player1)
-        end
-      end
-
-      context 'on the mid column' do
-        before do
-          set_col_mid_2
-          game.test_winner_status_update(player2)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player2)
-        end
-      end
-
-      context 'on the right column' do
-        before do
-          set_col_right_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player1)
-        end
-      end
-
-      context 'on the left higher right lower diagonal' do
-        before do
-          set_diag_r_low_1
-          game.test_winner_status_update(player1)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player1)
-        end
-      end
-
-      context 'on the left lower right higher diagonal' do
-        before do
-          set_diag_r_higher_2
-          game.test_winner_status_update(player2)
-        end
-        it 'returns winner object' do
-          expect(game.winner).to eql(player2)
-        end
-      end
-    end # context 'with three same pieces' do
+    end
   end # describe '@winner' do
 end
