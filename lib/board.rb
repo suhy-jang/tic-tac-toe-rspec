@@ -1,5 +1,3 @@
-require "./../lib/ui.rb"
-
 class Board
   attr_reader :state
 
