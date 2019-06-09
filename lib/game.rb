@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # frozen_string_literal: true
 
 class Game
@@ -8,13 +7,6 @@ class Game
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
     [1, 4, 7], [2, 5, 8], [3, 6, 9],
     [1, 5, 9], [3, 5, 7]
-=======
-class Game
-  WINNING_PERMUTATIONS = [
-    [1,2,3],[4,5,6],[7,8,9],
-    [1,4,7],[2,5,8],[3,6,9],
-    [1,5,9],[3,5,7]
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
   ].freeze
 
   def initialize(player1, player2, board)
@@ -36,18 +28,14 @@ class Game
     show_winner
   end
 
-<<<<<<< HEAD
   def test_winner_status_update(player)
     winner_status_update(player)
   end
 
-=======
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
   private
 
   def play(player)
     loop do
-<<<<<<< HEAD
       position = UserInterface.ask_position(player.name, player.stone)
       error = board_valid(position)
       move(player, position) if error.zero?
@@ -55,25 +43,12 @@ class Game
       UserInterface.inform_success(player.stone, position) if error.zero?
       UserInterface.throw_wrong_place_error if error == 1
       UserInterface.throw_wrong_place_error(position) if error == 2
-=======
-      position = UserInterface::ask_position(player.name, player.stone)
-      error = board_valid(position)
-      move(player, position) if error.zero?
-      show_board
-      UserInterface::inform_success(player.stone, position) if error.zero?
-      UserInterface::throw_wrong_place_error if error == 1
-      UserInterface::throw_wrong_place_error(position) if error == 2
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
       break if error.zero?
     end
   end
 
   def decide_first_player
-<<<<<<< HEAD
     name = UserInterface.ask_first_player_name(@player1.name, @player2.name, @player1.stone)
-=======
-    name = UserInterface::ask_first_player_name(@player1.name, @player2.name, @player1.stone)
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
 
     unless name == @player1.name
       change_turn
@@ -90,7 +65,6 @@ class Game
   end
 
   def show_board
-<<<<<<< HEAD
     UserInterface.display_board(@board.state)
   end
 
@@ -98,14 +72,6 @@ class Game
     return UserInterface.inform_result(@winner.name, @winner.stone) if @winner
 
     UserInterface.inform_result
-=======
-    UserInterface::display_board(@board.state)
-  end
-
-  def show_winner
-    return UserInterface::inform_result(@winner.name, @winner.stone) if @winner
-    UserInterface::inform_result
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
   end
 
   def board_valid(position)
@@ -130,8 +96,4 @@ class Game
       end
     end
   end
-<<<<<<< HEAD
-=======
-
->>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
 end
