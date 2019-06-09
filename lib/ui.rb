@@ -1,28 +1,47 @@
 
 module UserInterface
   def self.inform_begin_message
+<<<<<<< HEAD
     border = '-----------------------------------------------------------------'.center(80)
     line1 = 'Tic Tac Toe is a paper-and-pencil game for two players, X and O, '.center(80)
     line2 = 'who take turns marking the spaces in a 3×3 grid.'.center(80)
     line3 = 'The player who succeeds in placing three of their marks in a '.center(80)
     line4 = 'horizontal, vertical, or diagonal row wins the game.'.center(80)
+=======
+    border = "-----------------------------------------------------------------".center(80)
+    line1 = "Tic Tac Toe is a paper-and-pencil game for two players, X and O, ".center(80)
+    line2 = "who take turns marking the spaces in a 3×3 grid.".center(80)
+    line3 = "The player who succeeds in placing three of their marks in a ".center(80)
+    line4 = "horizontal, vertical, or diagonal row wins the game.".center(80)
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
     puts border, line1, line2, line3, line4, border
   end
 
   def self.ask_name(num)
+<<<<<<< HEAD
     user_input = ''
+=======
+    user_input = ""
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
     loop do
       print "Player #{num} name: ".rjust(50)
       user_input = gets.chomp
       break unless user_input.empty? || user_input.scan(/[a-zA-Z]/).empty?
+<<<<<<< HEAD
 
+=======
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
       type_again_name
     end
     user_input.upcase
   end
 
   def self.type_again_name
+<<<<<<< HEAD
     puts 'Please type in your name (with alphabet)!'.rjust(50)
+=======
+    puts "Please type in your name (with alphabet)!".rjust(50)
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
   end
 
   def self.ask_first_player_name(p1_name, p2_name, first_sym)
@@ -43,17 +62,28 @@ module UserInterface
   end
 
   def self.inform_result(winner_name = nil, winner_stone = nil)
+<<<<<<< HEAD
     puts 'Game Over!'.rjust(50)
     return puts '[ TIE! ]'.rjust(50) if winner_name.nil?
 
+=======
+    puts "Game Over!".rjust(50)
+    return puts "[ TIE! ]".rjust(50) if winner_name.nil?
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
     puts "[ #{winner_name} (#{winner_stone}) WON! ]".rjust(50)
   end
 
   def self.throw_wrong_place_error(position = nil)
+<<<<<<< HEAD
     return puts "'#{position}' already occupied!".rjust(50) if position
 
     puts 'Please input a correct number'.rjust(50)
     puts 'between 1 and 9 (not occupied)'.rjust(50)
+=======
+   return puts "'#{position}' already occupied!".rjust(50) if position
+   puts "Please input a correct number".rjust(50)
+   puts "between 1 and 9 (not occupied)".rjust(50)
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
   end
 
   def self.inform_success(player_stone, position)
@@ -61,7 +91,11 @@ module UserInterface
   end
 
   def self.display_board(state)
+<<<<<<< HEAD
     board = ''
+=======
+    board = ""
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
     line = "+-------+-------+-------+\n".rjust(55)
     wall = "|       |       |       |\n".rjust(55)
     row1 = "|   #{state[0]}   |   #{state[1]}   |   #{state[2]}   |\n".rjust(55)
@@ -72,4 +106,8 @@ module UserInterface
     board << line << wall << row3 << wall << line
     puts board
   end
+<<<<<<< HEAD
+=======
+
+>>>>>>> 05786986bfcdcffb6fb0960ca8501349ba5a5000
 end
