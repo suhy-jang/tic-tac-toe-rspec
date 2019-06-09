@@ -1,67 +1,210 @@
 # frozen_string_literal: true
 
-require './lib/player.rb'
-require './lib/board.rb'
 require './lib/game.rb'
 
 RSpec.describe Game do
   let(:player) do
     [
-      double(name: 'ABC', stone: :O),
-      double(name: 'DEF', stone: :X)
+      double(name: 'EBUKA', stone: :O),
+      double(name: 'SUH', stone: :X)
     ]
   end
-  let(:winner_idx) { rand(2) }
-  let(:no_winer_idx) { (0..1).reject { |idx| idx == winner_idx }.sample }
-  let(:p) { player[winner_idx].stone }
-  let(:q) { player[no_winer_idx].stone }
-  let(:win_board) do
-    [
-      double(state: [p, p, p, 4, 5, 6, 7, 8, 9]), # row_top
-      double(state: [1, 2, 3, p, p, p, 7, 8, 9]), # row_mid
-      double(state: [1, 2, 3, 4, 5, 6, p, p, p]), # row_bottom
-      double(state: [p, 2, 3, p, 5, 6, p, 8, 9]), # col_left
-      double(state: [1, p, 3, 4, p, 6, 7, p, 9]), # col_mid
-      double(state: [1, 2, p, 4, 5, p, 7, 8, p]), # col_right
-      double(state: [p, 2, 3, 4, p, 6, 7, 8, p]), # diag_r_low
-      double(state: [1, 2, p, 4, p, 6, p, 8, 9]) # diag_r_higher
-    ]
+  let(:mk_winner) { player.sample }
+  let(:mk_no_winner) { player.reject { |elem| elem == mk_winner }.sample }
+  let(:w) { mk_winner.stone }
+  let(:n) { mk_no_winner.stone }
+  let(:win_cases) do
+    double(t: double(state: [w, w, w, 4, 5, 6, 7, 8, 9]),
+           r: double(state: [1, 2, w, 4, 5, w, 7, 8, w]),
+           b: double(state: [1, 2, 3, 4, 5, 6, w, w, w]),
+           l: double(state: [w, 2, 3, w, 5, 6, w, 8, 9]),
+           mv: double(state: [1, w, 3, 4, w, 6, 7, w, 9]),
+           mh: double(state: [1, 2, 3, w, w, w, 7, 8, 9]),
+           dg_rl: double(state: [w, 2, 3, 4, w, 6, 7, 8, w]),
+           dg_rh: double(state: [1, 2, w, 4, w, 6, w, 8, 9]))
   end
 
-  let(:no_winer_board) do
-    [
-      double(state: [1, 2, 3, 4, 5, 6, 7, 8, 9]), # default
-      double(state: [p, 2, 3, 4, 5, 6, 7, 8, 9]), # only1
-      double(state: [p, p, 3, 4, 5, 6, 7, 8, 9]), # only2
-      double(state: [p, q, p, 4, 5, 6, 7, p, 9]), # rand_1
-      double(state: [1, p, 3, 4, 5, 6, p, q, p]), # rand_2
-      double(state: [p, 2, 3, q, 5, p, p, 8, 9]), # rand_3
-      double(state: [1, 2, p, p, 5, q, 7, 8, q]) # rand_4
-    ]
+  let(:win_game) do
+    double(t: Game.new(player.first, player.last, win_cases.t),
+           r: Game.new(player.first, player.last, win_cases.r),
+           b: Game.new(player.first, player.last, win_cases.b),
+           l: Game.new(player.first, player.last, win_cases.l),
+           mv: Game.new(player.first, player.last, win_cases.mv),
+           mh: Game.new(player.first, player.last, win_cases.mh),
+           dg_rl: Game.new(player.first, player.last, win_cases.dg_rl),
+           dg_rh: Game.new(player.first, player.last, win_cases.dg_rh))
   end
 
-  let(:rand_win) { rand(win_board.length) }
-  let(:win_game) { Game.new(player[0], player[1], win_board[rand_win]) }
-  let(:winner_name) { player[winner_idx].name }
-  let(:rand_no_winer) { rand(no_winer_board.length) }
-  let(:no_winer_game) { Game.new(player[0], player[1], no_winer_board[rand_no_winer]) }
-  let(:no_winer_name) { player[no_winer_idx].name }
+  let(:no_win_cases) do
+    double(mix_t: double(state: [w, n, w, 4, 5, 6, 7, 8, 9]),
+           mix_r: double(state: [1, 2, w, 4, 5, n, 7, 8, w]),
+           mix_b: double(state: [1, 2, 3, 4, 5, 6, w, n, w]),
+           mix_l: double(state: [w, 2, 3, n, 5, 6, w, 8, 9]),
+           mix_mv: double(state: [1, n, 3, 4, w, 6, 7, n, 9]),
+           mix_mh: double(state: [1, 2, 3, n, w, n, 7, 8, 9]),
+           mix_dg_rl: double(state: [n, 2, 3, 4, w, 6, 7, 8, n]),
+           mix_dg_rh: double(state: [1, 2, n, 4, w, 6, n, 8, 9]),
+           only_one: double(state: [w, 2, 3, 4, 5, 6, 7, 8, 9]),
+           only_two: double(state: [w, w, 3, 4, 5, 6, 7, 8, 9]),
+           spread_1: double(state: [1, w, w, w, 5, 6, 7, 8, 9]),
+           spread_2: double(state: [1, 2, w, w, w, 6, 7, 8, 9]),
+           spread_3: double(state: [1, 2, 3, 4, w, w, w, 8, 9]),
+           spread_4: double(state: [1, 2, 3, 4, 5, w, w, w, 9]),
+           spread_5: double(state: [w, 2, 3, 4, 5, 6, 7, w, w]),
+           spread_6: double(state: [w, w, 3, 4, 5, 6, 7, 8, w]),
+           default: double(state: [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+  end
+
+  let(:no_win_game) do
+    double(mix_t: Game.new(player.first, player.last, no_win_cases.mix_t),
+           mix_r: Game.new(player.first, player.last, no_win_cases.mix_r),
+           mix_b: Game.new(player.first, player.last, no_win_cases.mix_b),
+           mix_l: Game.new(player.first, player.last, no_win_cases.mix_l),
+           mix_mv: Game.new(player.first, player.last, no_win_cases.mix_mv),
+           mix_mh: Game.new(player.first, player.last, no_win_cases.mix_mh),
+           mix_dg_rl: Game.new(player.first, player.last, no_win_cases.mix_dg_rl),
+           mix_dg_rh: Game.new(player.first, player.last, no_win_cases.mix_dg_rh),
+           only_one: Game.new(player.first, player.last, no_win_cases.only_one),
+           only_two: Game.new(player.first, player.last, no_win_cases.only_two),
+           spread_1: Game.new(player.first, player.last, no_win_cases.spread_1),
+           spread_2: Game.new(player.first, player.last, no_win_cases.spread_2),
+           spread_3: Game.new(player.first, player.last, no_win_cases.spread_3),
+           spread_4: Game.new(player.first, player.last, no_win_cases.spread_4),
+           spread_5: Game.new(player.first, player.last, no_win_cases.spread_5),
+           spread_6: Game.new(player.first, player.last, no_win_cases.spread_6),
+           default: Game.new(player.first, player.last, no_win_cases.default))
+  end
 
   before do
-    win_game.test_winner_status_update(player[winner_idx])
-    no_winer_game.test_winner_status_update(player[no_winer_idx])
+    win_game.t.test_winner_status_update(mk_winner)
+    win_game.r.test_winner_status_update(mk_winner)
+    win_game.b.test_winner_status_update(mk_winner)
+    win_game.l.test_winner_status_update(mk_winner)
+    win_game.mv.test_winner_status_update(mk_winner)
+    win_game.mh.test_winner_status_update(mk_winner)
+    win_game.dg_rl.test_winner_status_update(mk_winner)
+    win_game.dg_rh.test_winner_status_update(mk_winner)
+    no_win_game.mix_t.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_r.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_b.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_l.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_mv.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_mh.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_dg_rl.test_winner_status_update(mk_no_winner)
+    no_win_game.mix_dg_rh.test_winner_status_update(mk_no_winner)
+    no_win_game.only_one.test_winner_status_update(mk_no_winner)
+    no_win_game.only_two.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_1.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_2.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_3.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_4.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_5.test_winner_status_update(mk_no_winner)
+    no_win_game.spread_6.test_winner_status_update(mk_no_winner)
+    no_win_game.default.test_winner_status_update(mk_no_winner)
   end
 
-  describe '@winner after #test_winner_status_update' do
-    context 'when no winner' do
-      it 'contains no object' do
-        expect(no_winer_game.winner).to_not eql(player[winner_idx])
+  describe '@winner' do
+    context 'when winner' do
+      it 'contains winner object matched for top row in board' do
+        expect(win_game.t.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for right column in board' do
+        expect(win_game.r.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for bottom row in board' do
+        expect(win_game.b.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for left column in board' do
+        expect(win_game.l.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for mid column in board' do
+        expect(win_game.mv.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for mid row in board' do
+        expect(win_game.mh.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for right lower diagonal in board' do
+        expect(win_game.dg_rl.winner).to eql(mk_winner)
+      end
+
+      it 'contains winner object matched for right higher diagonal in board' do
+        expect(win_game.dg_rh.winner).to eql(mk_winner)
       end
     end
 
-    context 'when winner' do
-      it 'contains winner object' do
-        expect(win_game.winner).to eql(player[winner_idx])
+    context 'when no winner' do
+      it 'contains no object filled with mixed top row in board' do
+        expect(no_win_game.mix_t.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed right column in board' do
+        expect(no_win_game.mix_r.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed bottom row in board' do
+        expect(no_win_game.mix_b.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed left column in board' do
+        expect(no_win_game.mix_l.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed mid column in board' do
+        expect(no_win_game.mix_mv.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed mid row in board' do
+        expect(no_win_game.mix_mh.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed right lower diagonal in board' do
+        expect(no_win_game.mix_dg_rl.winner).to eql(nil)
+      end
+
+      it 'contains no object filled with mixed right higher diagonal in board' do
+        expect(no_win_game.mix_dg_rh.winner).to eql(nil)
+      end
+
+      it 'contains no object at one piece only in board' do
+        expect(no_win_game.only_one.winner).to eql(nil)
+      end
+
+      it 'contains no object at two pieces only in board' do
+        expect(no_win_game.only_two.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 1 in board' do
+        expect(no_win_game.spread_1.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 2 in board' do
+        expect(no_win_game.spread_2.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 3 in board' do
+        expect(no_win_game.spread_3.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 4 in board' do
+        expect(no_win_game.spread_4.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 5 in board' do
+        expect(no_win_game.spread_5.winner).to eql(nil)
+      end
+
+      it 'contains no object at spreaded match 6 in board' do
+        expect(no_win_game.spread_6.winner).to eql(nil)
+      end
+
+      it 'contains no object at default board' do
+        expect(no_win_game.default.winner).to eql(nil)
       end
     end
   end # describe '@winner' do
