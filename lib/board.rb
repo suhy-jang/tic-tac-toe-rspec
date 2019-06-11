@@ -23,6 +23,10 @@ class Board
     @state[position - 1].class != Integer
   end
 
+  def test_occupy_num(num)
+    @occupy_num = num
+  end
+
   private
 
   def increase_occupy_num
