@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Game
-  attr_reader :winner
+  attr_reader :winner, :turn
 
   WINNING_PERMUTATIONS = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
@@ -28,6 +28,14 @@ class Game
     show_winner
   end
 
+  def test_change_turn
+    change_turn
+  end
+
+  def test_swap_stone
+    swap_stone
+  end
+
   def test_winner_status_update(player)
     winner_status_update(player)
   end
@@ -47,21 +55,22 @@ class Game
     end
   end
 
-  def decide_first_player
-    name = UserInterface.ask_first_player_name(@player1.name, @player2.name, @player1.stone)
+  def get_first_name
+    UserInterface.ask_first_player_name(@player1.name, @player2.name, @player1.stone)
+  end
 
-    unless name == @player1.name
-      change_turn
-      swap_stone(@player1, @player2)
-    end
+  def decide_first_player
+    return if get_first_name == @player1.name
+    change_turn
+    swap_stone
   end
 
   def change_turn
     @turn = @turn == 1 ? 0 : 1
   end
 
-  def swap_stone(player1, player2)
-    player1.stone, player2.stone = player2.stone, player1.stone
+  def swap_stone
+    @player1.stone, @player2.stone = @player2.stone, @player1.stone
   end
 
   def show_board
