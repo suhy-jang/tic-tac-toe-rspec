@@ -1,6 +1,6 @@
 # Rspec implementation for tic tac toe game
 
-This collaborative project to test our understanding of the [Rspec](https://en.wikipedia.org/wiki/RSpec).
+This is a collaborative project to test our understanding of the [Rspec](https://en.wikipedia.org/wiki/RSpec).
 
 The project is part of a series of projects to be completed by students of [Microverse](https://www.microverse.org/ "The Global School for Remote Software Developers!").
 
