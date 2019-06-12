@@ -1,5 +1,3 @@
-require "./../lib/ui.rb"
-
 class Board
   attr_reader :state
 
@@ -24,7 +22,11 @@ class Board
   def occupied?(position)
     @state[position - 1].class != Integer
   end
-  
+
+  def test_occupy_num(num)
+    @occupy_num = num
+  end
+
   private
 
   def increase_occupy_num

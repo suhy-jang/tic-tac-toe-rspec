@@ -1,26 +1,31 @@
-# Tic Tac Toe game implementation
+# Rspec implementation for tic tac toe game
 
-This collaborative project to test our understanding of the [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming).
+This collaborative project to test our understanding of the [Rspec](https://en.wikipedia.org/wiki/RSpec).
 
 The project is part of a series of projects to be completed by students of [Microverse](https://www.microverse.org/ "The Global School for Remote Software Developers!").
 
-## Game Rule
+## Relative link
 
-Tic Tac Toe is a paper-and-pencil game for two players, X and O,
+[Original Game Project](https://github.com/ebukaume/tic-tac-toe)
 
-who take turns marking the spaces in a 3×3 grid.
-
-The player who succeeds in placing three of their marks in a
-
-horizontal, vertical, or diagonal row wins the game.
+[Running Game Online](https://tic-tac-toe.suhyeonjang.repl.run/)
 
 ## Technologies
 
 - Ruby
 
+- Rspec
+
 ## Dependencies
 
-> Execution file location
+> Spec file location
+
+```sh
+./spec/board_spec.rb
+./spec/game_spec.rb
+```
+
+> Game execution file location
 
 ```sh
 ./bin/main.rb
@@ -40,37 +45,35 @@ horizontal, vertical, or diagonal row wins the game.
 > Clone the repository to your local machine
 
 ```sh
-$ git clone https://github.com/ebukaume/tic-tac-toe.git
+$ git clone https://github.com/shjang7/tic-tac-toe-rspec.git
 ```
 
 > Go to the directory
 
 ```sh
-$ cd tic-tac-toe
+$ cd tic-tac-toe-rspec
 ```
 
-> Go to the execution file directory
+> Run Rspec
 
 ```sh
-$ cd bin
+$ rspec
 ```
 
-> Run the file
+> You could run with --format option
 
 ```sh
-$ ruby main.rb
+$ rspec --format documentation
 ```
-
-> Follow the instructions provided by the Game.
 
 
 ## Contributors
 
-This is a collaborative project by me: [Ebuka Umeokonkwo](https://github.com/ebukaume) and [Suhyeon Jang](https://github.com/shjang7)
+This is a collaborative project by us: [Ebuka Umeokonkwo](https://github.com/ebukaume) and [Suhyeon Jang](https://github.com/shjang7)
 
 ## Contributing
 
-1. Fork it (https://github.com/ebukaume/tic-tac-toe/fork)
+1. Fork it (https://github.com/shjang7/tic-tac-toe-rspec/fork)
 2. Create your feature branch (git checkout -b feature/[choose-a-name])
 3. Commit your changes (git commit -am 'what this commit will fix/add')
 4. Push to the branch (git push origin feature/[chosen-name])

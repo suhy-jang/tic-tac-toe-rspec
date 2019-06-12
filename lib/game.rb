@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 class Game
+  attr_reader :winner, :turn
+
   WINNING_PERMUTATIONS = [
-    [1,2,3],[4,5,6],[7,8,9],
-    [1,4,7],[2,5,8],[3,6,9],
-    [1,5,9],[3,5,7]
+    [1, 2, 3], [4, 5, 6], [7, 8, 9],
+    [1, 4, 7], [2, 5, 8], [3, 6, 9],
+    [1, 5, 9], [3, 5, 7]
   ].freeze
 
   def initialize(player1, player2, board)
@@ -24,45 +28,59 @@ class Game
     show_winner
   end
 
+  def test_change_turn
+    change_turn
+  end
+
+  def test_swap_stone
+    swap_stone
+  end
+
+  def test_winner_status_update(player)
+    winner_status_update(player)
+  end
+
   private
 
   def play(player)
     loop do
-      position = UserInterface::ask_position(player.name, player.stone)
+      position = UserInterface.ask_position(player.name, player.stone)
       error = board_valid(position)
       move(player, position) if error.zero?
       show_board
-      UserInterface::inform_success(player.stone, position) if error.zero?
-      UserInterface::throw_wrong_place_error if error == 1
-      UserInterface::throw_wrong_place_error(position) if error == 2
+      UserInterface.inform_success(player.stone, position) if error.zero?
+      UserInterface.throw_wrong_place_error if error == 1
+      UserInterface.throw_wrong_place_error(position) if error == 2
       break if error.zero?
     end
   end
 
-  def decide_first_player
-    name = UserInterface::ask_first_player_name(@player1.name, @player2.name, @player1.stone)
+  def get_first_name
+    UserInterface.ask_first_player_name(@player1.name, @player2.name, @player1.stone)
+  end
 
-    unless name == @player1.name
-      change_turn
-      swap_stone(@player1, @player2)
-    end
+  def decide_first_player
+    return if get_first_name == @player1.name
+    change_turn
+    swap_stone
   end
 
   def change_turn
     @turn = @turn == 1 ? 0 : 1
   end
 
-  def swap_stone(player1, player2)
-    player1.stone, player2.stone = player2.stone, player1.stone
+  def swap_stone
+    @player1.stone, @player2.stone = @player2.stone, @player1.stone
   end
 
   def show_board
-    UserInterface::display_board(@board.state)
+    UserInterface.display_board(@board.state)
   end
 
   def show_winner
-    return UserInterface::inform_result(@winner.name, @winner.stone) if @winner
-    UserInterface::inform_result
+    return UserInterface.inform_result(@winner.name, @winner.stone) if @winner
+
+    UserInterface.inform_result
   end
 
   def board_valid(position)
@@ -87,5 +105,4 @@ class Game
       end
     end
   end
-
 end
